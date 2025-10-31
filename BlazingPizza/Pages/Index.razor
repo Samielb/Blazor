@@ -1,0 +1,91 @@
+@page "/"
+@layout MainLayout
+@using BlazingPizza.Models
+@using BlazingPizza.Services
+@using BlazingPizza.Components.Layout
+@inject PizzaService PizzaService
+
+<PageTitle>Blazing Pizza</PageTitle>
+
+<div class="main">
+    <h1>Our Pizzas</h1>
+    
+    @if (pizzas == null)
+    {
+        <p>Loading pizzas...</p>
+    }
+    else
+    {
+        <div class="pizza-grid">
+            @foreach (var pizza in pizzas)
+            {
+                <div class="pizza-card">
+                    <img src="@pizza.ImageUrl" alt="@pizza.Name" class="pizza-image" />
+                    <div class="pizza-details">
+                        <h3>@pizza.Name</h3>
+                        <p>@pizza.Description</p>
+                        <div class="price">$@pizza.Price</div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<PizzaSpecial>? pizzas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pizzas = await PizzaService.GetPizzaSpecialsAsync();
+    }
+}
+
+<style>
+    .main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .pizza-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .pizza-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .pizza-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .pizza-details {
+        padding: 15px;
+    }
+
+    .pizza-details h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+    }
+
+    .pizza-details p {
+        margin: 0 0 15px 0;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .price {
+        font-weight: bold;
+        color: #e44d26;
+        font-size: 1.2em;
+    }
+</style>

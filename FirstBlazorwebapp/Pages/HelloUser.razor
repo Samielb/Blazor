@@ -1,0 +1,14 @@
+@page "/hellouser"
+
+<h3>Hallo gebruiker 👋</h3>
+
+<input @bind="userName" placeholder="Typ je naam..." class="form-control mb-2" />
+
+@if (!string.IsNullOrWhiteSpace(userName))
+{
+    <p>Welkom, <strong>@userName</strong>!</p>
+}
+
+@code {
+    private string userName = string.Empty;
+}

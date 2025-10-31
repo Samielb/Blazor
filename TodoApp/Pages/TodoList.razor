@@ -1,0 +1,37 @@
+@page "/todolist"
+@using TodoApp.Data
+
+<h3>Todo Lijst</h3>
+
+<input @bind="newTodoTitle" placeholder="Nieuwe taak..." />
+<button @onclick="AddTodo">Toevoegen</button>
+
+<ul>
+    @foreach (var item in todos)
+    {
+        <li>
+            <input type="checkbox" @bind="item.IsCompleted" />
+            <span style="@(item.IsCompleted ? "text-decoration: line-through;" : "")">@item.Title</span>
+            <button @onclick="() => ToggleCompleted(item)">Markeer</button>
+        </li>
+    }
+</ul>
+
+@code {
+    private List<TodoItem> todos = new();
+    private string newTodoTitle = string.Empty;
+
+    private void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodoTitle))
+        {
+            todos.Add(new TodoItem { Id = todos.Count + 1, Title = newTodoTitle, IsCompleted = false });
+            newTodoTitle = string.Empty;
+        }
+    }
+
+    private void ToggleCompleted(TodoItem item)
+    {
+        item.IsCompleted = !item.IsCompleted;
+    }
+}
