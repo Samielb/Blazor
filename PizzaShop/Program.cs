@@ -15,6 +15,7 @@ builder.Services.AddDbContext<PizzaContext>(options =>
 
 // Register services
 builder.Services.AddScoped<PizzaService>();
+builder.Services.AddScoped<OrderState>();
 
 var app = builder.Build();
 
