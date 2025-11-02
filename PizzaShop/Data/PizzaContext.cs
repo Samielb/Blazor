@@ -15,10 +15,10 @@ public class PizzaContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Pizza>().HasData(
-            new Pizza { Id = 1, Name = "Margherita", Description = "Classic tomato and mozzarella", Price = 8.99m, IsVegetarian = true, IsVegan = false },
-            new Pizza { Id = 2, Name = "Pepperoni", Description = "Classic pepperoni with mozzarella", Price = 10.99m, IsVegetarian = false, IsVegan = false },
-            new Pizza { Id = 3, Name = "Veggie", Description = "Mixed vegetables with mozzarella", Price = 9.99m, IsVegetarian = true, IsVegan = false },
-            new Pizza { Id = 4, Name = "Vegan Supreme", Description = "Plant-based cheese with vegetables", Price = 11.99m, IsVegetarian = true, IsVegan = true }
+            new Pizza { Id = 1, Name = "Margherita", Description = "Classic tomato and mozzarella", BasePrice = 8.99m, IsVegetarian = true, IsVegan = false },
+            new Pizza { Id = 2, Name = "Pepperoni", Description = "Classic pepperoni with mozzarella", BasePrice = 10.99m, IsVegetarian = false, IsVegan = false },
+            new Pizza { Id = 3, Name = "Veggie", Description = "Mixed vegetables with mozzarella", BasePrice = 9.99m, IsVegetarian = true, IsVegan = false },
+            new Pizza { Id = 4, Name = "Vegan Supreme", Description = "Plant-based cheese with vegetables", BasePrice = 11.99m, IsVegetarian = true, IsVegan = true }
         );
     }
 }

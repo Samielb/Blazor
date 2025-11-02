@@ -2,36 +2,65 @@
 
 @if (OrderState != null && OrderState.ShowingConfigureDialog && OrderState.ConfiguringPizza != null)
 {
+    var pizza = OrderState.ConfiguringPizza;
+    
     <div class="dialog-container">
         <div class="dialog">
             <div class="dialog-header">
-                <h2>Configure @OrderState.ConfiguringPizza.Name</h2>
+                <h2>Configure @pizza.Name</h2>
+                <div class="pizza-price">$@pizza.Price.ToString("0.00")</div>
             </div>
             
             <div class="dialog-body">
                 <div class="form-group">
-                    <label>Size:</label>
-                    <select @bind="size" class="form-control">
-                        <option value="Small">Small</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Large">Large</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Special Instructions:</label>
-                    <input type="text" @bind="specialInstructions" class="form-control" placeholder="Any special instructions?"/>
+                    <div class="size-control">
+                        <label>Size: <strong>@pizza.Size</strong></label>
+                        <div class="slider-container">
+                            <span class="size-label">Small</span>
+                            <input type="range" 
+                                   min="0" 
+                                   max="2" 
+                                   step="1" 
+                                   @bind-value="sizeIndex"
+                                   @bind-value:event="oninput"
+                                   class="size-slider" />
+                            <span class="size-label">Large</span>
+                        </div>
+                        <div class="size-description">
+                            @(pizza.Size switch
+                            {
+                                "Small" => "Perfect for a light meal",
+                                "Medium" => "Great for one person",
+                                "Large" => "Ideal for sharing",
+                                _ => ""
+                            })
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Quantity:</label>
-                    <input type="number" @bind="quantity" min="1" max="10" class="form-control"/>
+                    <div class="quantity-control">
+                        <button class="quantity-btn" @onclick="DecreaseQuantity" :disabled="pizza.Quantity <= 1">-</button>
+                        <span class="quantity-display">@pizza.Quantity</span>
+                        <button class="quantity-btn" @onclick="IncreaseQuantity">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Special Instructions:</label>
+                    <textarea @bind="pizza.SpecialInstructions" 
+                             class="form-control" 
+                             placeholder="Any special instructions? (e.g., no onions, extra cheese, etc.)"
+                             rows="3"></textarea>
                 </div>
             </div>
             
             <div class="dialog-footer">
                 <button @onclick="OnCancel" class="btn btn-secondary">Cancel</button>
-                <button @onclick="OnConfirm" class="btn btn-primary">Add to Order</button>
+                <button @onclick="OnConfirm" class="btn btn-primary">
+                    Add to Order - $@((pizza.Price).ToString("0.00"))
+                </button>
             </div>
         </div>
     </div>
@@ -47,9 +76,46 @@
     [Inject]
     public OrderState OrderState { get; set; } = null!;
     
-    private string size = "Medium";
-    private string specialInstructions = string.Empty;
-    private int quantity = 1;
+    private int sizeIndex = 1; // Default to Medium
+    private readonly string[] sizes = { "Small", "Medium", "Large" };
+    
+    protected override void OnInitialized()
+    {
+        if (OrderState.ConfiguringPizza != null)
+        {
+            sizeIndex = Array.IndexOf(sizes, OrderState.ConfiguringPizza.Size);
+            if (sizeIndex == -1) sizeIndex = 1; // Default to Medium if not found
+        }
+    }
+    
+    private void DecreaseQuantity()
+    {
+        if (OrderState.ConfiguringPizza != null && OrderState.ConfiguringPizza.Quantity > 1)
+        {
+            OrderState.ConfiguringPizza.Quantity--;
+        }
+    }
+    
+    private void IncreaseQuantity()
+    {
+        if (OrderState.ConfiguringPizza != null)
+        {
+            OrderState.ConfiguringPizza.Quantity++;
+        }
+    }
+    
+    private string Size
+    {
+        get => sizes[sizeIndex];
+        set
+        {
+            sizeIndex = Array.IndexOf(sizes, value);
+            if (OrderState.ConfiguringPizza != null)
+            {
+                OrderState.ConfiguringPizza.Size = value;
+            }
+        }
+    }
 }
 
 <style>
@@ -68,15 +134,32 @@
     
     .dialog {
         background: white;
-        border-radius: 8px;
+        border-radius: 12px;
         width: 100%;
         max-width: 500px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
     }
     
     .dialog-header {
-        padding: 1rem;
+        padding: 1.5rem;
         border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+    }
+    
+    .dialog-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+    }
+    
+    .pizza-price {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #e44d26;
     }
     
     .dialog-body {
@@ -84,45 +167,155 @@
     }
     
     .dialog-footer {
-        padding: 1rem;
+        padding: 1.25rem 1.5rem;
         border-top: 1px solid #eee;
         display: flex;
         justify-content: flex-end;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        background-color: #f8f9fa;
     }
     
     .form-group {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
     }
     
     .form-control {
         display: block;
         width: 100%;
-        padding: 0.375rem 0.75rem;
+        padding: 0.5rem 0.75rem;
         font-size: 1rem;
         line-height: 1.5;
         color: #495057;
         background-color: #fff;
         background-clip: padding-box;
         border: 1px solid #ced4da;
-        border-radius: 0.25rem;
+        border-radius: 6px;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
     
+    textarea.form-control {
+        min-height: 80px;
+        resize: vertical;
+    }
+    
+    /* Size Control Styles */
+    .size-control {
+        background: #f8f9fa;
+        padding: 1.25rem;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+    
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1rem 0 0.5rem;
+    }
+    
+    .size-slider {
+        flex: 1;
+        -webkit-appearance: none;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        margin: 1rem 0;
+    }
+    
+    .size-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #007bff;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .size-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+    }
+    
+    .size-label {
+        font-size: 0.9rem;
+        color: #666;
+        min-width: 50px;
+        text-align: center;
+    }
+    
+    .size-description {
+        font-size: 0.9rem;
+        color: #666;
+        font-style: italic;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+    
+    /* Quantity Control */
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    
+    .quantity-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .quantity-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .quantity-btn:not(:disabled):hover {
+        background: #f0f0f0;
+    }
+    
+    .quantity-display {
+        min-width: 30px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    /* Buttons */
     .btn {
-        display: inline-block;
-        font-weight: 400;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
         text-align: center;
         white-space: nowrap;
         vertical-align: middle;
         user-select: none;
         border: 1px solid transparent;
-        padding: 0.375rem 0.75rem;
+        padding: 0.625rem 1.25rem;
         font-size: 1rem;
         line-height: 1.5;
-        border-radius: 0.25rem;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        border-radius: 6px;
+        transition: all 0.2s ease-in-out;
         cursor: pointer;
+        min-width: 100px;
     }
     
     .btn-primary {
@@ -131,13 +324,19 @@
         border-color: #007bff;
     }
     
-    .btn-secondary {
-        color: #fff;
-        background-color: #6c757d;
-        border-color: #6c757d;
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
     }
     
-    .btn:hover {
-        opacity: 0.9;
+    .btn-secondary {
+        color: #333;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
     }
 </style>

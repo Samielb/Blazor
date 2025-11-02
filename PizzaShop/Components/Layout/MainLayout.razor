@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@using PizzaShop.Services
+@using PizzaShop.Components.Shared
+@inject OrderState OrderState
 
 <div class="page">
     <div class="sidebar">
@@ -7,6 +10,15 @@
 
     <main>
         <div class="top-row px-4">
+            <div class="cart-button-container">
+                <button class="cart-button" @onclick="ToggleOrderSidebar">
+                    <span class="cart-icon">🛒</span>
+                    @if (OrderState.TotalItems > 0)
+                    {
+                        <span class="cart-badge">@OrderState.TotalItems</span>
+                    }
+                </button>
+            </div>
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
@@ -14,6 +26,8 @@
             @Body
         </article>
     </main>
+    
+    <OrderSidebar />
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -21,3 +35,10 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private void ToggleOrderSidebar()
+    {
+        OrderState.ToggleOrderSidebar();
+    }
+}
