@@ -1,0 +1,126 @@
+@page "/specials"
+@using PizzaShop.Models
+@using PizzaShop.Services
+@inject PizzaService PizzaService
+
+<PageTitle>Pizza Specials</PageTitle>
+
+<h1>Our Special Pizzas</h1>
+
+@if (pizzas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="pizza-grid">
+        @foreach (var pizza in pizzas)
+        {
+            <div class="pizza-card">
+                <div class="pizza-image">
+                    <span class="pizza-badge">
+                        @if (pizza.IsVegan)
+                        {
+                            <span class="badge bg-success">Vegan</span>
+                        }
+                        else if (pizza.IsVegetarian)
+                        {
+                            <span class="badge bg-success">Vegetarian</span>
+                        }
+                    </span>
+                </div>
+                <div class="pizza-details">
+                    <h3>@pizza.Name</h3>
+                    <p>@pizza.Description</p>
+                    <div class="price">$@pizza.Price.ToString("0.00")</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Pizza>? pizzas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pizzas = await PizzaService.GetPizzasAsync();
+    }
+}
+
+<style>
+    .pizza-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+    }
+
+    .pizza-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+    .pizza-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .pizza-image {
+        height: 200px;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: 1rem;
+    }
+
+    .pizza-badge {
+        background-color: #fff;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .pizza-details {
+        padding: 1.5rem;
+    }
+
+    .pizza-details h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .pizza-details p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #e44d26;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.6em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        color: #fff;
+    }
+
+    .bg-success {
+        background-color: #28a745;
+    }
+</style>
