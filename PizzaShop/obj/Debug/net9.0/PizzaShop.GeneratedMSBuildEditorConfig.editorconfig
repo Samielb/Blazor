@@ -48,6 +48,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/samib/OneDrive/Bureaublad/School/ROC zuidoost Software develop/Blazor/PizzaShop/Components/Shared/ConfigurePizzaDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcQ29uZmlndXJlUGl6emFEaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/samib/OneDrive/Bureaublad/School/ROC zuidoost Software develop/Blazor/PizzaShop/Components/Shared/OrderSidebar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcT3JkZXJTaWRlYmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/samib/OneDrive/Bureaublad/School/ROC zuidoost Software develop/Blazor/PizzaShop/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
